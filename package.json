@@ -19,6 +19,10 @@
   },
   "homepage": "https://github.com/Mau-chrysanthemum/node.js_node#readme",
   "dependencies": {
-    "express": "^4.16.4"
+    "body-parser": "^1.18.3",
+    "captchapng": "0.0.1",
+    "express": "^4.16.4",
+    "express-session": "^1.15.6",
+    "mongodb": "^3.1.12"
   }
 }
