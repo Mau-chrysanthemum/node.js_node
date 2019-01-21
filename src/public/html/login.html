@@ -47,7 +47,7 @@
                                     <!-- <button type="submit" onclick="login()"  class="btn btn-default">登录</button> -->
                                     <button onclick="login()" class="btn btn-default">登录</button>
                                     &nbsp;&nbsp;
-                                    <input onclick="register();" type="button" value="注册" class="btn btn-danger">
+                                    <input onclick="register()" type="button" value="注册" class="btn btn-danger">
                                 </div>
                             </div>
                         </div>
@@ -60,26 +60,29 @@
         $("#vcodeimgId").click(function () {
             // alert("1111111111")
             this.src = "/account/vcode?random=" + Math.random()
+         
         })
 
-        // function register() {
-        //     window.location.href = "/account/register"
-        // }
+        function register() {
+            window.location.href = "/account/register"
+        }
 
-        // function login() {
-        //     const username = $("#usernameId").val()
-        //     const password = $.md5($("#passwordId").val() + "DZH!@#love")
-        //     const vcode = $("#vcodeId").val()
+        function login() {
+            const username = $("#usernameId").val()
+            const password = $.md5($("#passwordId").val() + "$&")
+            const vcode = $("#vcodeId").val()
 
-        //     $.post('/account/login', { username, password, vcode }, function (data) {
-        //         if (data.status != 0) {
-        //             alert(data.message)
-        //             $("#vcodeimgId").attr('src', "/account/vcode?random=" + Math.random())
-        //         } else {
-        //             window.location.href = "/studentmanager/list"
-        //         }
-        //     })
-        // }
+            $.post('/account/login', { username, password, vcode }, function (data) {
+                // 登陆失败  刷新验证码
+                if (data.status != 0) {
+                    alert(data.message)
+                    $("#vcodeimgId").attr('src', "/account/vcode?random=" + Math.random())
+                } else {
+                    window.location.href = "/studentmanager/list"
+                    
+                }
+            })
+        }
     </script>
 
 </html>

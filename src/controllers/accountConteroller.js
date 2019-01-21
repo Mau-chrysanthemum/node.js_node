@@ -53,15 +53,52 @@ exports.register = (req, res) => {
 exports.getLoginpage = (req, res) => {
     res.sendFile(path.join(__dirname, "../public/html/login.html"))
 }
-exports.getVcodepage= (req, res) => {
-    var p = new captchapng(80, 30, parseInt(Math.random() * 9000 + 1000)); // width,height,numeric captcha
+// 验证码
+exports.getVcodeImage = (req, res) => {
+    const vcode = parseInt(Math.random() * 9000 + 1000);
+    console.log(vcode);
+    req.session.vcode = vcode
+    var p = new captchapng(80, 30,vcode); // width,height,numeric captcha
     p.color(0, 0, 0, 0);  // First color: background (red, green, blue, alpha)
     p.color(80, 80, 80, 255); // Second color: paint (red, green, blue, alpha)
-
     var img = p.getBase64();
     var imgbase64 = new Buffer(img, 'base64');
     res.writeHead(200, {
         'Content-Type': 'image/png'
     });
     res.end(imgbase64);
+}
+// 导处登陆方法
+
+exports.login = (req, res) => {
+    const searsession = req.session.vcode
+    const { username, password } = req.body
+    const result = {
+        status: 0,
+        message: '登陆成功'
+    }
+    if (req.body.vcode != searsession) {
+        result.status = 1
+        result.message = '验证码错误'
+
+        res.json(result)
+        return
+    }
+    MongoClient.connect(url, { useNewUrlParser: true }, function (err, client) {
+        const db = client.db(dbName)
+        const collection = db.collection('documents');
+
+        collection.findOne({ username, password }, (err, roc) => {
+            console.log(roc);
+            if (roc) {
+                client.close();
+                res.json(result)
+            } else {
+                result.status = 2,
+                    result.message = "账号或密码错误"
+                client.close();
+                res.json(result)
+            }
+        })
+    });
 }

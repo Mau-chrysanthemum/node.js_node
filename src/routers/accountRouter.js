@@ -14,8 +14,9 @@ accountRouter.post('/register', accountController.register)
 // 获取登陆页面
 accountRouter.get('/login', accountController.getLoginpage)
 // 获取验证码
-accountRouter.get('/vcode', accountController.getVcodepage)
-
+accountRouter.get('/vcode', accountController.getVcodeImage)
+// 登陆页面  登陆
+accountRouter.post('/login', accountController.login)
 // 导出路由
 module.exports=accountRouter
 
