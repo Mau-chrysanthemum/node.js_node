@@ -3,6 +3,8 @@ const express = require('express')
 const path = require('path')
 // const MongoClient = require('mongodb').MongoClient;
 const bodyParser = require('body-parser')
+const session=require('express-session')
+
 const app = express()
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }))
@@ -10,7 +12,7 @@ app.use(bodyParser.urlencoded({ extended: false }))
 // parse application/json
 app.use(bodyParser.json())
 
-
+app.use(session({ secret: 'keyboard cat', cookie: { maxAge: 60000 } }))
 // //创建app
 // const app = express()
 // 设置静态资源根目录
