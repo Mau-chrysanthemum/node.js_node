@@ -4,13 +4,8 @@
  * }
  */
 const path = require('path')
-const MongoClient = require('mongodb').MongoClient;
-var captchapng = require('captchapng');
-// Connection URL
-const url = 'mongodb://localhost:27017';
-
-// Database Name
-const dbName = 'szhmqd27';
+const captchapng = require('captchapng');
+const moerQuer = require(path.join(__dirname, "../tools/databasetool.js"))
 //  导出一个方法,获取注册页面
 exports.getRegisterpage = (req, res) => {
     res.sendFile(path.join(__dirname,"../public/html/register.html"))
@@ -23,31 +18,26 @@ exports.register = (req, res) => {
         message:'注册成功'
     }
     const { username } = req.body
-    MongoClient.connect(url, { useNewUrlParser: true }, function (err, client) {
-        const db = client.db(dbName)
-        const collection = db.collection('documents');
-        collection.findOne({ username }, (err, doc) => {
-            //如果result==null 没有查询到 就可以插入  如果查询到 说明用户已经存在
-            if (doc) {
-                result.status = 1
-                result.message = "此用户已经存在"
-                client.close();
+    moerQuer.findYige("documents", { username }, (err, doc) => {
+        if (doc) {
+            result.status = 1
+            result.message = "此用户已经存在"
+           
+            res.json(result)
+        } else {
+            // 如果用户名不存在就插入倒数局库
+            // result2 有值就表示成功   result2  没有值表示失败     result2   是数据库返回的
+            moerQuer.insertSingle("documents", req.body,(err, result2) => {
+                if (!result2) {
+                    result.status = 2
+                    result.message = "注册失败"
+                }
+               
                 res.json(result)
-            } else {
-                // 如果用户名不存在就插入倒数局库
-                // result2 有值就表示成功   result2  没有值表示失败     result2   是数据库返回的
-                collection.insertOne(req.body, (err, result2) => {
-                    if (!result2) {
-                        result.status = 2
-                        result.message="注册失败"
-                    }
-                    client.close();
-                    res.json(result)
-                })
-                
-            }
-        })
-    });
+            })
+
+        }
+    })
 }
 // 获取到导出方法,获取登陆页面
 exports.getLoginpage = (req, res) => {
@@ -71,34 +61,48 @@ exports.getVcodeImage = (req, res) => {
 // 导处登陆方法
 
 exports.login = (req, res) => {
-    const searsession = req.session.vcode
-    const { username, password } = req.body
+    // const searsession = req.session.vcode
+    const { username, password,vcode} = req.body
     const result = {
         status: 0,
         message: '登陆成功'
     }
-    if (req.body.vcode != searsession) {
+    if (vcode != req.session.vcode) {
         result.status = 1
         result.message = '验证码错误'
 
         res.json(result)
         return
     }
-    MongoClient.connect(url, { useNewUrlParser: true }, function (err, client) {
-        const db = client.db(dbName)
-        const collection = db.collection('documents');
+    // MongoClient.connect(url, { useNewUrlParser: true }, function (err, client) {
+    //     const db = client.db(dbName)
+    //     const collection = db.collection('documents');
+    moerQuer.findYige("documents", { username, password }, (err, roc) => {
+        if (roc) {
+          
+            res.json(result)
+        } else {
+            result.status = 2,
+            result.message = "账号或密码错误"
+           
+            res.json(result)
+        }
+     })
+    // MongoClient.connect(url, { useNewUrlParser: true }, function (err, client) {
+    //     const db = client.db(dbName)
+    //     const collection = db.collection('documents');
 
-        collection.findOne({ username, password }, (err, roc) => {
-            console.log(roc);
-            if (roc) {
-                client.close();
-                res.json(result)
-            } else {
-                result.status = 2,
-                    result.message = "账号或密码错误"
-                client.close();
-                res.json(result)
-            }
-        })
-    });
+    //     collection.findOne({ username, password }, (err, roc) => {
+    //         console.log(roc);
+    //         if (roc) {
+    //             client.close();
+    //             res.json(result)
+    //         } else {
+    //             result.status = 2,
+    //                 result.message = "账号或密码错误"
+    //             client.close();
+    //             res.json(result)
+    //         }
+    //     })
+    // });
 }

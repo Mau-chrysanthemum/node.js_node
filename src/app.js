@@ -8,11 +8,12 @@ const session=require('express-session')
 const app = express()
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }))
-
 // parse application/json
 app.use(bodyParser.json())
 
-app.use(session({ secret: 'keyboard cat', cookie: { maxAge: 60000 } }))
+app.use(session({
+    secret: 'keyboard cat', resave: false,
+    saveUninitialized: false, cookie: { maxAge: 60000 } }))
 // //创建app
 // const app = express()
 // 设置静态资源根目录
@@ -21,7 +22,11 @@ app.use(express.static(path.join(__dirname,"public")))
 // 导入二级路径路由对象
 const accountRouter = require(path.join(__dirname, "routers/accountRouter.js"))
 //    一级路径判断   跳转到二级路径路由二级路径
-app.use('/account',accountRouter)
+app.use('/account', accountRouter)
+
+const studentmanagerRouter = require(path.join(__dirname, "routers/studentmanagerRouter.js"))
+//    一级路径判断   跳转到二级路径路由二级路径
+app.use('/studentmanager', studentmanagerRouter)
 
 
 //处理请求
