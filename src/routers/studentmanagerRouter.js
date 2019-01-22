@@ -13,10 +13,12 @@ studentManagerRouter.get('/list', studentManagerController.getStudentListPage);
 studentManagerRouter.get('/add', studentManagerController.getStudentAddPage);
 // 提交新增的请求
 studentManagerRouter.post('/add', studentManagerController.StudentAddPage);
-// 获取新增get的请求=>获取页面
+// 获取编辑get的请求=>获取页面
 studentManagerRouter.get('/edit/:studentId', studentManagerController.getStudentEditPage);
-
+// 编辑
 studentManagerRouter.post('/edit/:studentId', studentManagerController.StudentEditPage);
+// 删除的请求
+studentManagerRouter.get('/delete/:studentId', studentManagerController.deleteStudentEditPage);
 
 // 导出路由
 module.exports =studentManagerRouter
