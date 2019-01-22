@@ -17,6 +17,8 @@ accountRouter.get('/login', accountController.getLoginpage)
 accountRouter.get('/vcode', accountController.getVcodeImage)
 // 登陆页面  登陆
 accountRouter.post('/login', accountController.login)
+// 登出页面的氢气
+accountRouter.get('/logout', accountController.logout)
 // 导出路由
 module.exports=accountRouter
 

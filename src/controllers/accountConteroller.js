@@ -79,30 +79,22 @@ exports.login = (req, res) => {
     //     const collection = db.collection('documents');
     moerQuer.findYige("documents", { username, password }, (err, roc) => {
         if (roc) {
-          
-            res.json(result)
+            req.session.loginedName = username
+            
         } else {
             result.status = 2,
             result.message = "账号或密码错误"
            
-            res.json(result)
+           
         }
+        res.json(result)
      })
-    // MongoClient.connect(url, { useNewUrlParser: true }, function (err, client) {
-    //     const db = client.db(dbName)
-    //     const collection = db.collection('documents');
+  
+}
+exports.logout = (req, res) => {
+    // 清空session中的用户名
+    req.session.loginedName = null
 
-    //     collection.findOne({ username, password }, (err, roc) => {
-    //         console.log(roc);
-    //         if (roc) {
-    //             client.close();
-    //             res.json(result)
-    //         } else {
-    //             result.status = 2,
-    //                 result.message = "账号或密码错误"
-    //             client.close();
-    //             res.json(result)
-    //         }
-    //     })
-    // });
+    // 要浏览器跳转登录页面
+    res.send('<script>location.href="/account/login"</script>')
 }

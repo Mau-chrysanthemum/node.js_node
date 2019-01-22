@@ -17,7 +17,20 @@ app.use(session({
 // //创建app
 // const app = express()
 // 设置静态资源根目录
-app.use(express.static(path.join(__dirname,"public")))
+app.use(express.static(path.join(__dirname, "public")))
+app.all('/*', (req, res, next) => {
+    // 如果是登录请求不拦截
+    if (req.url.includes('account')) {
+        next()
+        // 其余页面拦截判断是否登录
+    } else {
+        if (req.session.loginedName) {
+            next()
+        } else {
+            res.send(`<script>alert("还没有登录,请登录");location.href="/account/login"</script>`)
+        }
+    }
+})
 
 // 导入二级路径路由对象
 const accountRouter = require(path.join(__dirname, "routers/accountRouter.js"))
